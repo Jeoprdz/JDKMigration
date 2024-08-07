@@ -173,16 +173,50 @@ Após encontrar a dependência, adicione-a ao `pom.xml` conforme exemplificado a
 </dependencies>
 ```
 
-## 6. Conclusão
+## 6. Exclusions em Maven: O que são e por que são importantes?
+O que são Exclusions?
+No Maven, o gerenciamento de dependências é uma funcionalidade essencial que facilita a inclusão automática de bibliotecas externas no seu projeto. Contudo, essas dependências muitas vezes trazem consigo outras bibliotecas (dependências transitivas) que podem não ser necessárias ou desejáveis. O elemento <exclusions> é usado no arquivo pom.xml para evitar a inclusão de dependências transitivas indesejadas.
 
-### 6.1. Resumo
+Exemplo de Uso
+Considere um projeto que depende da biblioteca A, que por sua vez, depende da biblioteca B. Se B não for necessária para o seu projeto, ou se houver um conflito com outra versão de B que você já está usando, você pode excluir B da seguinte forma:
+
+```xml
+Copiar código
+<dependencies>
+    <dependency>
+        <groupId>br.com.exemplo</groupId>
+        <artifactId>biblioteca-A</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+            <exclusion>
+                <groupId>br.com.exemplo</groupId>
+                <artifactId>biblioteca-B</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+</dependencies>
+```
+Neste exemplo, a exclusão impede que biblioteca-B seja incluída no seu projeto, mesmo que biblioteca-A a utilize.
+
+Aplicações para Exclusions
+- Evitar Conflitos de Versão: Excluir dependências transitivas pode ser necessário quando há conflitos entre versões de bibliotecas que seu projeto usa diretamente e aquelas trazidas por dependências transitivas.
+- Redução do Tamanho do Projeto: Excluir dependências desnecessárias pode reduzir o tamanho do seu projeto, melhorando o desempenho e reduzindo o uso de recursos.
+- Aumentar o Controle: Usando exclusões, você tem maior controle sobre as bibliotecas que são incluídas no seu projeto, garantindo que apenas as dependências necessárias sejam usadas.
+- Resolução de Problemas de Segurança: Dependências transitivas podem introduzir vulnerabilidades de segurança. Ao excluir bibliotecas que você não precisa, você minimiza a superfície de ataque e reduz o risco de incorporar dependências vulneráveis.
+
+IMPORTANTE: O Exclusions foi feito com um propósito e não deve se tornar um cacoete para escovação de código. Se o desenvolvedor colocou ele no projeto disponibilizado, espera-se que o mesmo o fez por um bom motivo. Use esta funcionalidade apenas quando for realmente necessário.
+
+## 7. Conclusão
+
+### 7.1. Resumo
 Neste manual, abordamos:
 - Como adicionar dependências no Maven.
 - Como atualizar a versão das dependências.
 - Como mudar a versão do Java no Maven.
 - Como encontrar dependências no Maven Repository e adicioná-las ao `pom.xml`.
+- Como e quando utilizar Exclusions.
 
-### 6.2. Recursos Adicionais
+### 7.2. Recursos Adicionais
 - [Documentação oficial do Maven](https://maven.apache.org/guides/index.html)
 - [Maven Repository](https://mvnrepository.com/)
 - [Tutoriais e guias de Maven](https://www.baeldung.com/maven)
