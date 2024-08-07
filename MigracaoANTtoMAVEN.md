@@ -380,19 +380,85 @@ Maven possui uma vasta gama de plugins para diversas tarefas. Aqui estão alguns
     </plugin>
     ```
 
-## 4. Conclusão
+#### 4. Utilizando Bibliotecas Internas com Maven
+4.1. Utilizando Bibliotecas Internas com Maven
+Em alguns casos, pode ser necessário utilizar bibliotecas internas que não estão disponíveis no repositório central do Maven ou em qualquer outro repositório remoto. Para isso, é possível adicionar essas bibliotecas manualmente no repositório local do Maven (.m2), que fica no seu diretório de usuário. 
+A intenção é sempre ter o ambiente o mais atualizado possível e, preferencialmente um repositório compartilhado, porém é valido entender como podemos adicionar outros projetos que criamos como biblioteca no Maven, o que, geralmente, é a primeira barreira para um fair-trade e causa desistência por parte da comunidade, ou, em outros casos, reclamação do ecossistema que envolve o Java.
 
-### 4.1. Vantagens da Atualização para Maven
+#### 4.2. Disponibilizando a dependência interna
+Exportar a Biblioteca: Primeiro, certifique-se de que a biblioteca interna que você deseja utilizar está buildada em formato JAR. 
+
+#### 4.2.1 Via código
+Adicionar o JAR ao Repositório Local: Utilize o comando abaixo para instalar o JAR no repositório local do Maven. Este código terá o mesmo efeito que colar o arquivo dentro da pasta m2 do computador e, na verdade, se trata de apenas abastecer o local onde o Maven busca as bibliotecas. (Quando adicionamos no pom.xml uma dependência, nada mais fazemos que sinalizar o maven que ele precisa ir até o maven repo e trazer uma cópia do JAR de dependência para dentro da nossa pasta m2 e, a partir daí, consumir de lá a biblioteca)
+
+
+ ```bash
+mvn install:install-file -Dfile=/caminho/para/biblioteca-interna.jar -DgroupId=com.exemplo -DartifactId=biblioteca-interna -Dversion=1.0.0 -Dpackaging=jar
+```
+Nesse comando:
+
+-Dfile: Caminho para o arquivo JAR.
+-DgroupId: Grupo ao qual o artefato pertence, normalmente segue a estrutura de pacotes do Java.
+-DartifactId: Nome da biblioteca.
+-Dversion: Versão do JAR.
+-Dpackaging: Tipo de embalagem, que é "jar" na maioria dos casos.
+Adicionar a Dependência no pom.xml: Depois que o JAR estiver no repositório local, adicione a dependência ao seu pom.xml:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>br.com.exemplo</groupId>
+        <artifactId>biblioteca-interna</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
+```
+
+#### 4.2.2 Manualmente
+```xml
+<dependencies>
+    <dependency>
+        <groupId>br.com.exemplo</groupId>
+        <artifactId>biblioteca-interna</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
+```
+Sabe aquele caminho que aparece no groupId? Aquele caminho deve ser o caminho em árvore até o seu JAR a partir da sua pasta m2, que está no seu usuário do Sistema Operacional.
+Nesse caso, acessaríamos a pasta m2 e criaríamos as pastas:
+├── .m2/
+│   └── repository/
+│       └── br/
+│         └── com/
+│           └── witzler/
+│             └── nome_do_projeto/
+│               └── 1.0/ (versão)
+│                 └── nome_do_projeto-VERSION.JAR
+
+
+#### 4.3. Benefícios de Utilizar Bibliotecas Internas
+- Controle Total: Utilizar bibliotecas internas permite maior controle sobre as versões e atualizações do código.
+- Segurança: Manter bibliotecas internamente pode ser uma medida de segurança, impedindo o uso de bibliotecas que podem não estar disponíveis publicamente.
+- Dependências Personalizadas: Facilita o uso de bibliotecas customizadas que são específicas para um projeto ou uma organização.
+- Interação entre projetos internos: Se o produto final a ser entregue se refere a um projeto que depende de outras bibliotecas que são desenvolvidas a parte, seja por um outro time, por outro colaborador ou, separada até mesmo por tema, será necessário ter essas bibliotecas adicionadas no seu projeto, logo é importante ter o domínio dessa técnica.
+
+#### 4.4. Considerações Importantes
+Manutenção do Repositório Local: Adicionar bibliotecas manualmente ao repositório local exige cuidado na manutenção, especialmente se houver múltiplas versões ou se a equipe de desenvolvimento for grande.
+Portabilidade: Quando outras pessoas precisam trabalhar no mesmo projeto, você deve assegurar que elas também tenham essas bibliotecas instaladas localmente, ou considere configurar um repositório Maven interno compartilhado.
+
+## 5. Conclusão
+
+### 5.1. Vantagens da Atualização para Maven
 - Simplificação do gerenciamento de dependências
 - Ciclo de vida de construção predefinido
 - Estrutura de projeto padronizada
 - Extensibilidade com uma ampla gama de plugins
 
-### 4.2. Desafios e Considerações
+### 5.2. Desafios e Considerações
 - Curva de aprendizado para novos usuários
 - Possíveis ajustes necessários para customizações específicas de projetos
 
-### 4.3. Passos Finais
+### 5.3. Passos Finais
 - Testar a migração em um ambiente de desenvolvimento antes de mover para produção
 - Aproveitar a documentação extensa e comunidade ativa do Maven para suporte e melhores práticas
 
